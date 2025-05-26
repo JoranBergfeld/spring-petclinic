@@ -20,9 +20,6 @@ variables:
   tag: '$(Build.BuildId)'
   javaVersion: '17'
 
-  # Agent VM image name
-  vmImageName: 'ubuntu-latest'
-
 stages:
 - stage: Build
   displayName: Build and push stage
@@ -37,7 +34,7 @@ stages:
       inputs:
         versionSpec: $(javaVersion)
         jdkArchitectureOption: 'x64'
-        jdkSourceOption: 'AzureStorage'
+        jdkSourceOption: 'UseInstaller'
         jdkVendor: 'Adoptium'
     
     # Build the Spring Boot image
