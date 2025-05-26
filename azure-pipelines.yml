@@ -26,11 +26,11 @@ variables:
 stages:
 - stage: Build
   displayName: Build and push stage
-  jobs:
+  jobs:  
   - job: Build
     displayName: Build
     pool:
-      vmImage: $(vmImageName)
+      name: sample-pool
     steps:
     - task: JavaToolInstaller@0
       displayName: 'Install Java'
