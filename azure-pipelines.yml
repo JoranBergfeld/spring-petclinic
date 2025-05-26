@@ -5,7 +5,8 @@
 trigger:
 - main
 
-pool: sample-pool
+pool:
+  name: sample-pool
 
 resources:
 - repo: self
