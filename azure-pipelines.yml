@@ -1,6 +1,6 @@
-# Docker
-# Build and push an image to Azure Container Registry
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+# Spring Boot
+# Build and push an image to Azure Container Registry using Spring Boot's built-in container support
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
 
 trigger:
 - main
@@ -13,8 +13,9 @@ variables:
   dockerRegistryServiceConnection: '3e78164a-e8f1-41b9-9337-40181417b3a8'
   imageRepository: 'joranbergfeldspringpetclinic'
   containerRegistry: 'playgroundcontainerregistry.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/.devcontainer/Dockerfile'
+  imageName: 'spring-petclinic'
   tag: '$(Build.BuildId)'
+  javaVersion: '17'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
@@ -28,12 +29,40 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
-    - task: Docker@2
-      displayName: Build and push an image to container registry
+    - task: JavaToolInstaller@0
+      displayName: 'Install Java'
       inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
+        versionSpec: $(javaVersion)
+        jdkArchitectureOption: 'x64'
+        jdkSourceOption: 'PreInstalled'
+    
+    # Build the Spring Boot image
+    - task: Maven@3
+      displayName: 'Build Spring Boot image'
+      inputs:
+        mavenPomFile: 'pom.xml'
+        goals: 'spring-boot:build-image'
+        options: '-Dspring-boot.build-image.imageName=$(imageName):$(tag)'
+        javaHomeOption: 'JDKVersion'
+        jdkVersionOption: '1.$(javaVersion)'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+    
+    # Log in to Azure Container Registry
+    - task: Docker@2
+      displayName: Login to ACR
+      inputs:
+        command: login
         containerRegistry: $(dockerRegistryServiceConnection)
-        tags: |
-          $(tag)
+    
+    # Tag the image for the container registry
+    - script: |
+        docker tag $(imageName):$(tag) $(containerRegistry)/$(imageRepository):$(tag)
+      displayName: 'Tag Docker image for ACR'
+    
+    # Push the image to the container registry
+    - script: |
+        docker push $(containerRegistry)/$(imageRepository):$(tag)
+      displayName: 'Push Docker image to ACR'
