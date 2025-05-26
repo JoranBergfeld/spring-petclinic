@@ -39,18 +39,14 @@ stages:
           mvn -version
 
     # Build the Spring Boot image
-    - task: Maven@3
+    - task: Bash@3
       displayName: 'Build Spring Boot image'
       inputs:
-        mavenPomFile: 'pom.xml'
-        goals: 'spring-boot:build-image'
-        options: '-Dspring-boot.build-image.imageName=$(imageName):$(tag)'
-        javaHomeOption: 'JAVA_HOME_17_X64'
-        jdkVersionOption: '1.$(javaVersion)'
-        mavenVersionOption: 'Default'
-        mavenAuthenticateFeed: false
-        effectivePomSkip: false
-        sonarQubeRunAnalysis: false
+        targetType: 'inline'
+        script: |
+          echo "Image name: $(imageName)"
+          echo "Tag: $(tag)"
+          mvn -Dspring-boot.build-image.imageName=$(imageName):$(tag) spring-boot:build-image
     
     # Log in to Azure Container Registry
     - task: Docker@2
