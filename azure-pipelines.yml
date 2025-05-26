@@ -45,7 +45,7 @@ stages:
         mavenPomFile: 'pom.xml'
         goals: 'spring-boot:build-image'
         options: '-Dspring-boot.build-image.imageName=$(imageName):$(tag)'
-        javaHomeOption: 'JDKVersion'
+        javaHomeOption: 'JAVA_HOME_17_X64'
         jdkVersionOption: '1.$(javaVersion)'
         mavenVersionOption: 'Default'
         mavenAuthenticateFeed: false
