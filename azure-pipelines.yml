@@ -30,14 +30,15 @@ stages:
   - job: Build
     displayName: Build
     pool:
-      name: sample-pool
+      name: sample-pool    
     steps:
     - task: JavaToolInstaller@0
       displayName: 'Install Java'
       inputs:
         versionSpec: $(javaVersion)
         jdkArchitectureOption: 'x64'
-        jdkSourceOption: 'PreInstalled'
+        jdkSourceOption: 'AzureStorage'
+        jdkVendor: 'Adoptium'
     
     # Build the Spring Boot image
     - task: Maven@3
