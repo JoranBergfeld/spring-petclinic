@@ -29,14 +29,16 @@ stages:
     pool:
       name: sample-pool
     steps:
-    - task: JavaToolInstaller@0
-      displayName: 'Install Java'
+    - task: Bash@3
       inputs:
-        versionSpec: $(javaVersion)
-        jdkArchitectureOption: 'x64'
-        jdkSourceOption: 'UseInstaller'
-        jdkVendor: 'Adoptium'
-    
+        targetType: 'inline'
+        script: |
+          # Install Java 17 manually
+          sudo apt-get update
+          sudo apt-get install -y openjdk-17-jdk
+          # Verify Java version
+          java -version
+
     # Build the Spring Boot image
     - task: Maven@3
       displayName: 'Build Spring Boot image'
