@@ -30,7 +30,7 @@ stages:
   - job: Build
     displayName: Build
     pool:
-      name: sample-pool    
+      name: sample-pool
     steps:
     - task: JavaToolInstaller@0
       displayName: 'Install Java'
