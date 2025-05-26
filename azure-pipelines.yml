@@ -33,11 +33,10 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          # Install Java 17 manually
-          sudo apt-get update
-          sudo apt-get install -y openjdk-17-jdk
           # Verify Java version
           java -version
+          # Verify Maven version
+          mvn -version
 
     # Build the Spring Boot image
     - task: Maven@3
